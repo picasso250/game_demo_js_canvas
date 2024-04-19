@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas 游戏框架</title>
+<style>
+    canvas {
+        border: 1px solid #000;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+<script>
+    // 获取 canvas 元素
+    var canvas = document.getElementById("gameCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // 定义正方形的位置和尺寸
+    var squareSize = 50;
+    var squareX = canvas.width / 2 - squareSize / 2;
+    var squareY = canvas.height / 2 - squareSize / 2;
+
+    // 定义正方形的移动速度
+    var speedX = 1; // X 轴速度
+    var speedY = 0.5; // Y 轴速度
+
+    // 游戏循环
+    function gameLoop() {
+        // 清除画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 绘制正方形
+        ctx.fillStyle = "#FF0000";
+        ctx.fillRect(squareX, squareY, squareSize, squareSize);
+
+        // 更新正方形位置
+        squareX += speedX;
+        squareY += speedY;
+
+        // 碰撞检测，使正方形在画布边界上反弹
+        if (squareX < 0 || squareX + squareSize > canvas.width) {
+            speedX = -speedX;
+        }
+        if (squareY < 0 || squareY + squareSize > canvas.height) {
+            speedY = -speedY;
+        }
+
+        // 循环调用游戏循环函数
+        requestAnimationFrame(gameLoop);
+    }
+
+    // 启动游戏循环
+    gameLoop();
+</script>
+</body>
+</html>
