@@ -108,7 +108,7 @@ const camera = {
     y: 0,
     width: canvas.width,
     height: canvas.height,
-    follow: function(targetX, targetY) {
+    follow: function (targetX, targetY) {
         // 设置相机位置跟随角色位置
         this.x = targetX - this.width / 2;
         this.y = targetY - this.height / 2;
@@ -161,6 +161,16 @@ function gameLoop() {
 
     // 还原全局转换
     offscreenCtx.restore();
+
+    // 如果敌人数量为0，则游戏结束
+    if (enemies.length === 0) {
+        offscreenCtx.fillText("Win!", 10, 30);
+    } else {
+        // 绘制敌人数量
+        offscreenCtx.fillStyle = "#000000"; // 将文字颜色改为黑色
+        offscreenCtx.font = "20px Arial";
+        offscreenCtx.fillText("Enemies: " + enemies.length, 10, 30);
+    }
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
