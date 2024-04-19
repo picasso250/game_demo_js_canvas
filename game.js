@@ -34,7 +34,7 @@ function generateEnemies(numEnemies) {
         const enemyX = Math.random() * canvas.width;
         const enemyY = Math.random() * canvas.height;
         const enemyRadius = 20;
-        const enemyColor = getRandomBlueColor();
+        const enemyColor = "blue"; // 设置为蓝色
         const enemyRotation = Math.random() * Math.PI * 2; // 随机朝向
         const enemy = new Character(offscreenCanvas, enemyX, enemyY, enemyRadius, enemyColor, "#FFFF00", "#000000");
         enemy.setRotation(enemyRotation); // 设置随机朝向
@@ -42,40 +42,43 @@ function generateEnemies(numEnemies) {
     }
 }
 
-// 生成随机蓝色
-function getRandomBlueColor() {
-    const blueValues = ["#0000FF", "#0074D9", "#7FDBFF", "#39CCCC", "#3D9970", "#2ECC40", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#85144b", "#F012BE", "#B10DC9"];
-    const randomIndex = Math.floor(Math.random() * blueValues.length);
-    return blueValues[randomIndex];
-}
-
 // 生成10个敌人
 generateEnemies(10);
 
 // 游戏循环
 function gameLoop() {
+    // 获取当前时间
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - previousTime) / 1000; // 将时间差转换为秒
+
     // 清除双缓冲画布
     offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-    // 更新游戏角色位置
-    character.update();
+    // 更新游戏角色位置，并传递时间差
+    character.update(deltaTime);
 
-    // 绘制游戏角色到双缓冲画布
-    character.draw();
+    // 绘制游戏角色到双缓冲画布，并传递时间差
+    character.draw(offscreenCtx, deltaTime);
 
     // 更新并绘制敌人
     enemies.forEach(enemy => {
-        enemy.update();
-        enemy.draw();
+        enemy.update(deltaTime);
+        enemy.draw(offscreenCtx, deltaTime);
     });
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(offscreenCanvas, 0, 0);
 
+    // 更新上一帧时间
+    previousTime = currentTime;
+
     // 循环调用游戏循环函数
     requestAnimationFrame(gameLoop);
 }
+
+// 记录上一帧时间
+let previousTime = performance.now();
 
 // 启动游戏循环
 gameLoop();

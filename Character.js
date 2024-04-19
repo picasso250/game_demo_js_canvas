@@ -11,21 +11,24 @@ class Character {
         this.noseColor = noseColor;
         this.targetX = x;
         this.targetY = y;
-        this.speed = 2;
-        this.rotation = 0; // 添加旋转角度属性，并初始化为0
+        this.speed = 100; // 设定初始速度
+        this.rotation = 0;
     }
 
     // 更新游戏角色位置
-    update() {
+    update(deltaTime) {
         // 计算移动方向和距离
         const dx = this.targetX - this.x;
         const dy = this.targetY - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // 如果距离大于速度，则按比例移动，否则直接移动到目标点
-        if (distance > this.speed) {
-            this.x += (dx / distance) * this.speed;
-            this.y += (dy / distance) * this.speed;
+        // 计算移动步长
+        const step = Math.min(distance, this.speed * deltaTime);
+
+        // 如果距离大于步长，则按比例移动，否则直接移动到目标点
+        if (distance > step) {
+            this.x += (dx / distance) * step;
+            this.y += (dy / distance) * step;
         } else {
             this.x = this.targetX;
             this.y = this.targetY;
@@ -51,7 +54,7 @@ class Character {
         this.setRotation(angle);
     }
 
-    draw() {
+    draw(deltaTime) {
         // 保存当前绘图状态
         this.ctx.save();
         
