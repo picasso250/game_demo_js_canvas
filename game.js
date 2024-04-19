@@ -10,12 +10,6 @@ class Square {
         this.targetX = x;
         this.targetY = y;
         this.speed = 2;
-
-        // 鼠标点击事件监听器
-        this.canvas.addEventListener("click", (event) => {
-            this.targetX = event.clientX - this.canvas.offsetLeft;
-            this.targetY = event.clientY - this.canvas.offsetTop;
-        });
     }
 
     // 更新方块位置
@@ -42,26 +36,51 @@ class Square {
     }
 }
 
-// 创建方块对象并启动游戏循环
-document.addEventListener("DOMContentLoaded", () => {
-    const canvas = document.getElementById("gameCanvas");
-    const square = new Square(canvas, canvas.width / 2, canvas.height / 2, 50, "#FF0000");
+// 创建双缓冲画布
+const offscreenCanvas = document.createElement("canvas");
+const offscreenCtx = offscreenCanvas.getContext("2d");
 
-    // 游戏循环
-    function gameLoop() {
-        // 清除画布
-        square.ctx.clearRect(0, 0, canvas.width, canvas.height);
+// 获取画布元素
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-        // 更新方块位置
-        square.update();
+// 设置双缓冲画布尺寸
+offscreenCanvas.width = canvas.width;
+offscreenCanvas.height = canvas.height;
 
-        // 绘制方块
-        square.draw();
+// 创建方块对象
+const square = new Square(offscreenCanvas, canvas.width / 2, canvas.height / 2, 50, "#FF0000");
 
-        // 循环调用游戏循环函数
-        requestAnimationFrame(gameLoop);
-    }
+// 处理点击事件
+canvas.addEventListener("click", function(event) {
+    // 将点击事件位置转换为双缓冲画布坐标系中的位置
+    const rect = canvas.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
 
-    // 启动游戏循环
-    gameLoop();
+    // 更新方块的目标点位置为点击位置
+    square.targetX = clickX;
+    square.targetY = clickY;
 });
+
+// 游戏循环
+function gameLoop() {
+    // 清除双缓冲画布
+    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+    // 更新方块位置
+    square.update();
+
+    // 绘制方块到双缓冲画布
+    square.draw();
+
+    // 将双缓冲画布内容绘制到主画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+
+    // 循环调用游戏循环函数
+    requestAnimationFrame(gameLoop);
+}
+
+// 启动游戏循环
+gameLoop();
