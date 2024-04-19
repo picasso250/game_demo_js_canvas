@@ -20,8 +20,8 @@ canvas.addEventListener("contextmenu", function (event) {
 
     // 将点击事件位置转换为双缓冲画布坐标系中的位置
     const rect = canvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+    const clickX = (event.clientX - rect.left) + camera.x;
+    const clickY = (event.clientY - rect.top) + camera.y;
 
     // 更新方块的目标点位置为点击位置
     character.setTargetPoint(clickX, clickY);
@@ -30,8 +30,8 @@ canvas.addEventListener("contextmenu", function (event) {
 canvas.addEventListener("click", function (event) {
     // 将点击事件位置转换为双缓冲画布坐标系中的位置
     const rect = canvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+    const clickX = (event.clientX - rect.left) + camera.x;
+    const clickY = (event.clientY - rect.top) + camera.y;
 
     // 发射子弹
     character.shootBullet();
@@ -64,12 +64,37 @@ var bullets = [];
 function updateAndDrawBullets(deltaTime) {
     bullets.forEach(bullet => {
         bullet.update(deltaTime);
-        bullet.draw();
+
+        // 将子弹位置转换为相机坐标系中的位置
+        const bulletX = bullet.x - camera.x;
+        const bulletY = bullet.y - camera.y;
+
+        // 绘制子弹，确保仍在视口内
+        if (bulletX >= 0 && bulletX <= canvas.width && bulletY >= 0 && bulletY <= canvas.height) {
+            bullet.draw();
+        }
     });
 
     // 过滤出仍在视口内的子弹
-    bullets = bullets.filter(bullet => bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height);
+    bullets = bullets.filter(bullet => {
+        const bulletX = bullet.x - camera.x;
+        const bulletY = bullet.y - camera.y;
+        return bulletX >= 0 && bulletX <= canvas.width && bulletY >= 0 && bulletY <= canvas.height;
+    });
 }
+
+// 定义相机对象
+const camera = {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+    follow: function(targetX, targetY) {
+        // 设置相机位置跟随角色位置
+        this.x = targetX - this.width / 2;
+        this.y = targetY - this.height / 2;
+    }
+};
 
 // 游戏循环
 function gameLoop() {
@@ -83,6 +108,13 @@ function gameLoop() {
     // 更新游戏角色位置，并传递时间差
     character.update(deltaTime);
 
+    // 跟随相机移动
+    camera.follow(character.x, character.y);
+
+    // 设置全局的转换
+    offscreenCtx.save();
+    offscreenCtx.translate(-camera.x, -camera.y);
+
     // 绘制游戏角色到双缓冲画布，并传递时间差
     character.draw(offscreenCtx, deltaTime);
 
@@ -94,6 +126,9 @@ function gameLoop() {
 
     // 更新并绘制子弹
     updateAndDrawBullets(deltaTime);
+
+    // 还原全局转换
+    offscreenCtx.restore();
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
