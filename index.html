@@ -12,63 +12,6 @@
 </head>
 <body>
 <canvas id="gameCanvas" width="400" height="400"></canvas>
-<script>
-    // 获取 canvas 元素
-    var canvas = document.getElementById("gameCanvas");
-    var ctx = canvas.getContext("2d");
-
-    // 定义正方形的位置和尺寸
-    var squareSize = 50;
-    var squareCenterX = canvas.width / 2; // 正方形中心点的 X 坐标
-    var squareCenterY = canvas.height / 2; // 正方形中心点的 Y 坐标
-
-    // 定义目标点的位置
-    var targetX = canvas.width / 2;
-    var targetY = canvas.height / 2;
-
-    // 定义移动速度
-    var speed = 2;
-
-    // 鼠标点击事件监听器
-    canvas.addEventListener("click", function(event) {
-        // 更新目标点位置为鼠标点击位置
-        targetX = event.clientX - canvas.offsetLeft;
-        targetY = event.clientY - canvas.offsetTop;
-    });
-
-    // 游戏循环
-    function gameLoop() {
-        // 清除画布
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // 计算正方形移动的方向和距离
-        var dx = targetX - squareCenterX;
-        var dy = targetY - squareCenterY;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-
-        // 如果距离大于速度，则按比例移动，否则直接移动到目标点
-        if (distance > speed) {
-            squareCenterX += (dx / distance) * speed;
-            squareCenterY += (dy / distance) * speed;
-        } else {
-            squareCenterX = targetX;
-            squareCenterY = targetY;
-        }
-
-        // 重新计算正方形左上角的位置
-        var squareX = squareCenterX - squareSize / 2;
-        var squareY = squareCenterY - squareSize / 2;
-
-        // 绘制正方形
-        ctx.fillStyle = "#FF0000";
-        ctx.fillRect(squareX, squareY, squareSize, squareSize);
-
-        // 循环调用游戏循环函数
-        requestAnimationFrame(gameLoop);
-    }
-
-    // 启动游戏循环
-    gameLoop();
-</script>
+<script src="game.js"></script>
 </body>
 </html>
