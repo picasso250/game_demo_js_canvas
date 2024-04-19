@@ -25,6 +25,33 @@ canvas.addEventListener("click", function (event) {
     character.setTargetPoint(clickX, clickY);
 });
 
+// 敌人数组
+const enemies = [];
+
+// 生成敌人函数
+function generateEnemies(numEnemies) {
+    for (let i = 0; i < numEnemies; i++) {
+        const enemyX = Math.random() * canvas.width;
+        const enemyY = Math.random() * canvas.height;
+        const enemyRadius = 20;
+        const enemyColor = getRandomBlueColor();
+        const enemyRotation = Math.random() * Math.PI * 2; // 随机朝向
+        const enemy = new Character(offscreenCanvas, enemyX, enemyY, enemyRadius, enemyColor, "#FFFF00", "#000000");
+        enemy.setRotation(enemyRotation); // 设置随机朝向
+        enemies.push(enemy);
+    }
+}
+
+// 生成随机蓝色
+function getRandomBlueColor() {
+    const blueValues = ["#0000FF", "#0074D9", "#7FDBFF", "#39CCCC", "#3D9970", "#2ECC40", "#01FF70", "#FFDC00", "#FF851B", "#FF4136", "#85144b", "#F012BE", "#B10DC9"];
+    const randomIndex = Math.floor(Math.random() * blueValues.length);
+    return blueValues[randomIndex];
+}
+
+// 生成10个敌人
+generateEnemies(10);
+
 // 游戏循环
 function gameLoop() {
     // 清除双缓冲画布
@@ -35,6 +62,12 @@ function gameLoop() {
 
     // 绘制游戏角色到双缓冲画布
     character.draw();
+
+    // 更新并绘制敌人
+    enemies.forEach(enemy => {
+        enemy.update();
+        enemy.draw();
+    });
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
