@@ -1,6 +1,6 @@
 // 定义游戏角色类
 class Character {
-    constructor(canvas, x, y, size, bodyColor, headColor, noseColor) {
+    constructor(canvas, x, y, size, bodyColor, headColor, noseColor, health) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
         this.x = x;
@@ -13,6 +13,22 @@ class Character {
         this.targetY = y;
         this.speed = 100; // 设定初始速度
         this.rotation = 0;
+        this.health = health; // 新增的血量属性
+    }
+    
+    // 新增发射子弹方法
+    shootBullet() {
+        const bulletSize = 5;
+        const bulletSpeed = 300; // 子弹速度
+        const bulletColor = "#FFFF00"; // 黄色
+
+        // 计算子弹的起始位置
+        const bulletX = this.x + Math.cos(this.rotation) * this.size;
+        const bulletY = this.y + Math.sin(this.rotation) * this.size;
+
+        // 创建子弹对象
+        const bullet = new Bullet(offscreenCanvas, bulletX, bulletY, bulletSize, bulletColor, this.rotation, bulletSpeed);
+        bullets.push(bullet);
     }
 
     // 更新游戏角色位置

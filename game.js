@@ -14,8 +14,10 @@ offscreenCanvas.height = canvas.height;
 // 创建游戏角色对象
 const character = new Character(offscreenCanvas, canvas.width / 2, canvas.height / 2, 25, "#FF0000", "#FFFF00", "#000000");
 
-// 处理点击事件
-canvas.addEventListener("click", function (event) {
+// 更改点击事件处理方式
+canvas.addEventListener("contextmenu", function (event) {
+    event.preventDefault(); // 阻止默认右键菜单行为
+
     // 将点击事件位置转换为双缓冲画布坐标系中的位置
     const rect = canvas.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
@@ -23,6 +25,16 @@ canvas.addEventListener("click", function (event) {
 
     // 更新方块的目标点位置为点击位置
     character.setTargetPoint(clickX, clickY);
+});
+
+canvas.addEventListener("click", function (event) {
+    // 将点击事件位置转换为双缓冲画布坐标系中的位置
+    const rect = canvas.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    // 发射子弹
+    character.shootBullet();
 });
 
 // 敌人数组
@@ -45,6 +57,20 @@ function generateEnemies(numEnemies) {
 // 生成10个敌人
 generateEnemies(10);
 
+// 子弹数组
+var bullets = [];
+
+// 更新并绘制子弹
+function updateAndDrawBullets(deltaTime) {
+    bullets.forEach(bullet => {
+        bullet.update(deltaTime);
+        bullet.draw();
+    });
+
+    // 过滤出仍在视口内的子弹
+    bullets = bullets.filter(bullet => bullet.x >= 0 && bullet.x <= canvas.width && bullet.y >= 0 && bullet.y <= canvas.height);
+}
+
 // 游戏循环
 function gameLoop() {
     // 获取当前时间
@@ -65,6 +91,9 @@ function gameLoop() {
         enemy.update(deltaTime);
         enemy.draw(offscreenCtx, deltaTime);
     });
+
+    // 更新并绘制子弹
+    updateAndDrawBullets(deltaTime);
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
