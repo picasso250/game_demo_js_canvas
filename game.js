@@ -22,16 +22,7 @@ canvas.addEventListener("click", function (event) {
     const clickY = event.clientY - rect.top;
 
     // 更新方块的目标点位置为点击位置
-    character.targetX = clickX;
-    character.targetY = clickY;
-
-    // 计算目标点相对于当前位置的角度
-    const dx = clickX - character.x;
-    const dy = clickY - character.y;
-    const angle = Math.atan2(dy, dx);
-
-    // 设置角色朝向
-    character.setRotation(angle);
+    character.setTargetPoint(clickX, clickY);
 });
 
 // 游戏循环

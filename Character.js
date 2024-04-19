@@ -37,6 +37,20 @@ class Character {
         this.rotation = rotation;
     }
 
+    // 设置目标点的方法
+    setTargetPoint(x, y) {
+        this.targetX = x;
+        this.targetY = y;
+
+        // 计算目标点相对于当前位置的角度
+        const dx = x - this.x;
+        const dy = y - this.y;
+        const angle = Math.atan2(dy, dx);
+
+        // 设置角色朝向
+        this.setRotation(angle);
+    }
+
     draw() {
         // 保存当前绘图状态
         this.ctx.save();
