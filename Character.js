@@ -1,19 +1,19 @@
 // 定义游戏角色类
 class Character {
-    constructor(canvas, x, y, size, bodyColor, headColor, noseColor, health) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext("2d");
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.bodyColor = bodyColor;
-        this.headColor = headColor;
-        this.noseColor = noseColor;
-        this.targetX = x;
-        this.targetY = y;
-        this.speed = 100; // 设定初始速度
+    constructor(options) {
+        this.canvas = options.canvas;
+        this.ctx = this.canvas.getContext("2d");
+        this.x = options.x;
+        this.y = options.y;
+        this.size = options.size;
+        this.bodyColor = options.bodyColor;
+        this.headColor = options.headColor;
+        this.noseColor = options.noseColor;
+        this.targetX = options.x;
+        this.targetY = options.y;
+        this.speed = options.speed || 100; // 设定初始速度，默认为100
         this.rotation = 0;
-        this.health = health; // 新增的血量属性
+        this.health = options.health || 100; // 新增的血量属性，默认为100
     }
     
     // 新增发射子弹方法

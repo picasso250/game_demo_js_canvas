@@ -12,7 +12,16 @@ offscreenCanvas.width = canvas.width;
 offscreenCanvas.height = canvas.height;
 
 // 创建游戏角色对象
-const character = new Character(offscreenCanvas, canvas.width / 2, canvas.height / 2, 25, "#FF0000", "#FFFF00", "#000000");
+const characterOptions = {
+    canvas: offscreenCanvas,
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    size: 25,
+    bodyColor: "#FF0000",
+    headColor: "#FFFF00",
+    noseColor: "#000000"
+};
+const character = new Character(characterOptions);
 
 // 更改点击事件处理方式
 canvas.addEventListener("contextmenu", function (event) {
@@ -38,7 +47,7 @@ canvas.addEventListener("click", function (event) {
 });
 
 // 敌人数组
-const enemies = [];
+var enemies = [];
 
 // 生成敌人函数
 function generateEnemies(numEnemies) {
@@ -48,7 +57,17 @@ function generateEnemies(numEnemies) {
         const enemyRadius = 20;
         const enemyColor = "blue"; // 设置为蓝色
         const enemyRotation = Math.random() * Math.PI * 2; // 随机朝向
-        const enemy = new Character(offscreenCanvas, enemyX, enemyY, enemyRadius, enemyColor, "#FFFF00", "#000000");
+        const enemyOptions = {
+            canvas: offscreenCanvas,
+            x: enemyX,
+            y: enemyY,
+            size: enemyRadius,
+            bodyColor: enemyColor,
+            headColor: "#FFFF00",
+            noseColor: "#000000",
+            health: 100 // 例如，如果需要指定血量
+        };
+        const enemy = new Character(enemyOptions);
         enemy.setRotation(enemyRotation); // 设置随机朝向
         enemies.push(enemy);
     }
@@ -122,10 +141,23 @@ function gameLoop() {
     enemies.forEach(enemy => {
         enemy.update(deltaTime);
         enemy.draw(offscreenCtx, deltaTime);
+
+        // 碰撞检测：遍历所有子弹，检测是否与当前敌人发生碰撞
+        bullets.forEach(bullet => {
+            if (isCollision(enemy, bullet)) {
+                // 如果敌人碰撞了子弹，则敌人的hp减少200
+                enemy.health -= 200;
+                // 移除子弹
+                bullets = bullets.filter(b => b !== bullet);
+            }
+        });
     });
 
     // 更新并绘制子弹
     updateAndDrawBullets(deltaTime);
+
+    // 过滤出仍存活的敌人
+    enemies = enemies.filter(enemy => enemy.health > 0);
 
     // 还原全局转换
     offscreenCtx.restore();
@@ -139,6 +171,14 @@ function gameLoop() {
 
     // 循环调用游戏循环函数
     requestAnimationFrame(gameLoop);
+}
+
+// 碰撞检测函数
+function isCollision(object1, object2) {
+    const dx = object1.x - object2.x;
+    const dy = object1.y - object2.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    return distance < object1.size + object2.size;
 }
 
 // 记录上一帧时间
