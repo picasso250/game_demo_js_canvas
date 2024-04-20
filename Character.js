@@ -6,14 +6,12 @@ class Character {
         this.x = options.x;
         this.y = options.y;
         this.size = options.size;
-        this.bodyColor = options.bodyColor;
-        this.headColor = options.headColor;
-        this.noseColor = options.noseColor;
         this.targetX = options.x;
         this.targetY = options.y;
         this.speed = options.speed || 100; // 设定初始速度，默认为100
         this.rotation = 0;
         this.health = options.health || 100; // 新增的血量属性，默认为100
+        this.imageName = options.imageName; // 新增的图像名称属性
     }
     
     // 新增发射子弹方法
@@ -70,7 +68,7 @@ class Character {
         this.setRotation(angle);
     }
 
-    draw(deltaTime) {
+    draw() {
         // 保存当前绘图状态
         this.ctx.save();
         
@@ -80,24 +78,12 @@ class Character {
         // 旋转角度
         this.ctx.rotate(this.rotation);
         
-        // 绘制身体（椭圆）
-        this.ctx.fillStyle = this.bodyColor;
-        this.ctx.beginPath();
-        this.ctx.ellipse(0, 0, this.size, this.size * 1.5, 0, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // 绘制头部（圆），圆心与身体重合
-        this.ctx.fillStyle = this.headColor;
-        this.ctx.beginPath();
-        this.ctx.arc(0, 0, this.size / 1.1, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // 绘制鼻子（小点）
-        this.ctx.fillStyle = this.noseColor;
-        this.ctx.beginPath();
-        this.ctx.arc(this.size * 0.9, 0, this.size / 6, 0, Math.PI * 2);
-        this.ctx.fill();
-
+        // 获取人物图像
+        const image = imageLoader.getImage(this.imageName);
+        
+        // 绘制图像
+        this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
+        
         // 恢复绘图状态
         this.ctx.restore();
     }

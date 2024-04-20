@@ -113,5 +113,20 @@ function isCollision(object1, object2) {
 // 记录上一帧时间
 let previousTime = performance.now();
 
-// 启动游戏循环
-gameLoop();
+// 使用示例
+const imageLoader = new ImageLoader();
+
+// 添加图片URL到加载队列
+imageLoader.addImage('manBlue_gun', 'assets/images/PNG/Man Blue/manBlue_gun.png');
+imageLoader.addImage('robot1_gun', 'assets/images/PNG/Robot 1/robot1_gun.png');
+
+// 设置加载完成后的回调函数
+imageLoader.setOnload(() => {
+    console.log('所有图片加载完成！');
+    // 在这里可以执行加载完成后的操作
+    // 例如，获取并使用特定名称的图片
+    const img1 = imageLoader.getImage('image1');
+    const img2 = imageLoader.getImage('image2');
+
+    gameLoop();
+});

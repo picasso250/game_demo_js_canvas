@@ -1,1 +1,4 @@
 deploy.ps1
+*.png
+Thumbs.db
+assets/

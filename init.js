@@ -23,7 +23,8 @@ function generateEnemies(numEnemies) {
             bodyColor: enemyColor,
             headColor: "#FFFF00",
             noseColor: "#000000",
-            health: 100 // 例如，如果需要指定血量
+            health: 100,
+            imageName: "robot1_gun"
         };
         const enemy = new Character(enemyOptions);
         enemy.setRotation(enemyRotation); // 设置随机朝向
@@ -41,19 +42,20 @@ function init(canvas) {
         size: 25,
         bodyColor: "#FF0000",
         headColor: "#FFFF00",
-        noseColor: "#000000"
+        noseColor: "#000000",
+        imageName: "manBlue_gun"
     };
     character = new Character(characterOptions);
 
     // 更改点击事件处理方式
     canvas.addEventListener("contextmenu", function (event) {
         event.preventDefault(); // 阻止默认右键菜单行为
-    
+
         // 将点击事件位置转换为双缓冲画布坐标系中的位置
         const rect = canvas.getBoundingClientRect();
         const clickX = (event.clientX - rect.left) + camera.x;
         const clickY = (event.clientY - rect.top) + camera.y;
-    
+
         // 更新方块的目标点位置为点击位置
         character.setTargetPoint(clickX, clickY);
     });
