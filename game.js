@@ -74,6 +74,13 @@ function update(deltaTime) {
                 bullets = bullets.filter(b => b !== bullet);
             }
         });
+
+        // 检测敌人与角色的碰撞
+        if (isCollision(enemy, character)) {
+            // 如果敌人碰撞了角色，角色的hp减少200
+            character.health -= 200;
+            // 可以根据需要进行其他处理，比如角色后退、播放受伤动画等
+        }
     });
 
     // 更新并绘制子弹
@@ -81,6 +88,7 @@ function update(deltaTime) {
 
     // 过滤出仍存活的敌人
     enemies = enemies.filter(enemy => enemy.health > 0);
+
 }
 
 // 游戏循环
@@ -101,15 +109,7 @@ function gameLoop() {
     // 还原全局转换
     offscreenCtx.restore();
 
-    // 如果敌人数量为0，则游戏结束
-    if (enemies.length === 0) {
-        offscreenCtx.fillText("Win!", 10, 30);
-    } else {
-        // 绘制敌人数量
-        offscreenCtx.fillStyle = "#000000"; // 将文字颜色改为黑色
-        offscreenCtx.font = "20px Arial";
-        offscreenCtx.fillText("Enemies: " + enemies.length, 10, 30);
-    }
+    drawUI();
 
     // 将双缓冲画布内容绘制到主画布
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -120,6 +120,20 @@ function gameLoop() {
 
     // 循环调用游戏循环函数
     requestAnimationFrame(gameLoop);
+}
+
+function drawUI() {
+    // 如果敌人数量为0，则游戏结束
+    if (enemies.length === 0) {
+        offscreenCtx.fillText("Win!", 10, 30);
+    } else if (character.health <= 0) {
+        offscreenCtx.fillText("Fail!", 10, 30);
+    } else {
+        // 绘制敌人数量
+        offscreenCtx.fillStyle = "#000000"; // 将文字颜色改为黑色
+        offscreenCtx.font = "20px Arial";
+        offscreenCtx.fillText("Enemies: " + enemies.length, 10, 30);
+    }
 }
 
 // 碰撞检测函数

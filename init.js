@@ -57,7 +57,8 @@ function init(canvas) {
         const clickY = (event.clientY - rect.top) + camera.y;
 
         // 更新方块的目标点位置为点击位置
-        character.setTargetPoint(clickX, clickY);
+        if (character.health > 0)
+            character.setTargetPoint(clickX, clickY);
     });
 
     canvas.addEventListener("click", function (event) {
@@ -67,7 +68,8 @@ function init(canvas) {
         const clickY = (event.clientY - rect.top) + camera.y;
 
         // 发射子弹
-        character.shootBullet();
+        if (character.health > 0)
+            character.shootBullet();
     });
 
     // 生成10个敌人
