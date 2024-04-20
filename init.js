@@ -26,7 +26,7 @@ function generateEnemies(numEnemies) {
             health: 100,
             imageName: "robot1_gun"
         };
-        const enemy = new Character(enemyOptions);
+        const enemy = new Enemy(enemyOptions);
         enemy.setRotation(enemyRotation); // 设置随机朝向
         enemies.push(enemy);
     }
@@ -43,7 +43,7 @@ function init(canvas) {
         imageName: "manBlue_gun",
         health: 100,
     };
-    character = new Character(characterOptions);
+    character = new Player(characterOptions);
 
     // 监听键盘按下事件
     document.addEventListener("keydown", function (event) {
@@ -79,16 +79,22 @@ function init(canvas) {
         }
     });
 
-    canvas.addEventListener("click", function (event) {
+    canvas.addEventListener("mousemove", function (event) {
         // 将点击事件位置转换为双缓冲画布坐标系中的位置
         const rect = canvas.getBoundingClientRect();
         const clickX = (event.clientX - rect.left) + camera.x;
         const clickY = (event.clientY - rect.top) + camera.y;
-
-        // 发射子弹
+    
+        // 计算角度
+        const deltaX = clickX - character.x;
+        const deltaY = clickY - character.y;
+        const angle = Math.atan2(deltaY, deltaX);
+    
+        // 设置角色的旋转
         if (character.health > 0)
-            character.shootBullet();
+            character.setRotation(angle);
     });
+    
 
     // 生成10个敌人
     generateEnemies(10);
