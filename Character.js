@@ -6,14 +6,14 @@ class Character {
         this.x = options.x;
         this.y = options.y;
         this.size = options.size;
-        this.targetX = options.x;
-        this.targetY = options.y;
         this.speed = options.speed || 100; // 设定初始速度，默认为100
         this.rotation = 0;
         this.health = options.health || 100; // 新增的血量属性，默认为100
         this.imageName = options.imageName; // 新增的图像名称属性
+        this.verticalDirection = "none"; // 垂直方向的移动
+        this.horizontalDirection = "none"; // 水平方向的移动
     }
-    
+
     // 新增发射子弹方法
     shootBullet() {
         const bulletSize = 5;
@@ -31,22 +31,31 @@ class Character {
 
     // 更新游戏角色位置
     update(deltaTime) {
-        // 计算移动方向和距离
-        const dx = this.targetX - this.x;
-        const dy = this.targetY - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        // 计算标准化移动向量
+        const moveVector = { x: 0, y: 0 };
 
-        // 计算移动步长
-        const step = Math.min(distance, this.speed * deltaTime);
-
-        // 如果距离大于步长，则按比例移动，否则直接移动到目标点
-        if (distance > step) {
-            this.x += (dx / distance) * step;
-            this.y += (dy / distance) * step;
-        } else {
-            this.x = this.targetX;
-            this.y = this.targetY;
+        if (this.verticalDirection === "up") {
+            moveVector.y -= 1;
+        } else if (this.verticalDirection === "down") {
+            moveVector.y += 1;
         }
+
+        if (this.horizontalDirection === "left") {
+            moveVector.x -= 1;
+        } else if (this.horizontalDirection === "right") {
+            moveVector.x += 1;
+        }
+
+        // 标准化向量
+        const length = Math.sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y);
+        if (length !== 0) {
+            moveVector.x /= length;
+            moveVector.y /= length;
+        }
+
+        // 根据标准化向量和速度更新位置
+        this.x += moveVector.x * this.speed * deltaTime;
+        this.y += moveVector.y * this.speed * deltaTime;
     }
 
     // 设置旋转角度的方法
@@ -54,36 +63,22 @@ class Character {
         this.rotation = rotation;
     }
 
-    // 设置目标点的方法
-    setTargetPoint(x, y) {
-        this.targetX = x;
-        this.targetY = y;
-
-        // 计算目标点相对于当前位置的角度
-        const dx = x - this.x;
-        const dy = y - this.y;
-        const angle = Math.atan2(dy, dx);
-
-        // 设置角色朝向
-        this.setRotation(angle);
-    }
-
     draw() {
         // 保存当前绘图状态
         this.ctx.save();
-        
+
         // 平移到角色中心点
         this.ctx.translate(this.x, this.y);
-        
+
         // 旋转角度
         this.ctx.rotate(this.rotation);
-        
+
         // 获取人物图像
         const image = imageLoader.getImage(this.imageName);
-        
+
         // 绘制图像
         this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
-        
+
         // 恢复绘图状态
         this.ctx.restore();
     }

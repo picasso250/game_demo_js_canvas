@@ -40,25 +40,43 @@ function init(canvas) {
         x: canvas.width / 2,
         y: canvas.height / 2,
         size: 25,
-        bodyColor: "#FF0000",
-        headColor: "#FFFF00",
-        noseColor: "#000000",
-        imageName: "manBlue_gun"
+        imageName: "manBlue_gun",
+        health: 100,
     };
     character = new Character(characterOptions);
 
-    // 更改点击事件处理方式
-    canvas.addEventListener("contextmenu", function (event) {
-        event.preventDefault(); // 阻止默认右键菜单行为
+    // 监听键盘按下事件
+    document.addEventListener("keydown", function (event) {
+        // 根据按下的按键来设置角色的移动方向
+        switch (event.key) {
+            case "w":
+                character.verticalDirection = "up";
+                break;
+            case "s":
+                character.verticalDirection = "down";
+                break;
+            case "a":
+                character.horizontalDirection = "left";
+                break;
+            case "d":
+                character.horizontalDirection = "right";
+                break;
+        }
+    });
 
-        // 将点击事件位置转换为双缓冲画布坐标系中的位置
-        const rect = canvas.getBoundingClientRect();
-        const clickX = (event.clientX - rect.left) + camera.x;
-        const clickY = (event.clientY - rect.top) + camera.y;
-
-        // 更新方块的目标点位置为点击位置
-        if (character.health > 0)
-            character.setTargetPoint(clickX, clickY);
+    // 监听键盘释放事件
+    document.addEventListener("keyup", function (event) {
+        // 根据释放的按键来取消角色的移动方向
+        switch (event.key) {
+            case "w":
+            case "s":
+                character.verticalDirection = "none";
+                break;
+            case "a":
+            case "d":
+                character.horizontalDirection = "none";
+                break;
+        }
     });
 
     canvas.addEventListener("click", function (event) {
