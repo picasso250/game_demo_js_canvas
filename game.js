@@ -29,7 +29,27 @@ if (typeof init === 'function') {
     console.log("init函数不存在。");
 }
 
+function drawBackground() {
+    const tileSize = 64;
+    const tile_01 = imageLoader.getImage('tile_01');
+
+    // 计算视口内背景瓷砖的起始位置和结束位置
+    const startX = Math.floor(camera.x / tileSize) * tileSize;
+    const endX = Math.ceil((camera.x + camera.width) / tileSize) * tileSize;
+    const startY = Math.floor(camera.y / tileSize) * tileSize;
+    const endY = Math.ceil((camera.y + camera.height) / tileSize) * tileSize;
+
+    // 循环绘制视口内的背景瓷砖
+    for (let x = startX; x < endX; x += tileSize) {
+        for (let y = startY; y < endY; y += tileSize) {
+            offscreenCtx.drawImage(tile_01, x - 1, y - 1, tileSize + 2, tileSize + 2);
+        }
+    }
+}
+
 function update(deltaTime) {
+    // 绘制背景
+    drawBackground();
 
     // 更新游戏角色位置，并传递时间差
     character.update(deltaTime);
@@ -113,20 +133,17 @@ function isCollision(object1, object2) {
 // 记录上一帧时间
 let previousTime = performance.now();
 
-// 使用示例
 const imageLoader = new ImageLoader();
 
 // 添加图片URL到加载队列
 imageLoader.addImage('manBlue_gun', 'assets/images/PNG/Man Blue/manBlue_gun.png');
 imageLoader.addImage('robot1_gun', 'assets/images/PNG/Robot 1/robot1_gun.png');
+imageLoader.addImage('tile_01', 'assets/images/PNG/Tiles/tile_01.png');
 
 // 设置加载完成后的回调函数
 imageLoader.setOnload(() => {
     console.log('所有图片加载完成！');
-    // 在这里可以执行加载完成后的操作
-    // 例如，获取并使用特定名称的图片
-    const img1 = imageLoader.getImage('image1');
-    const img2 = imageLoader.getImage('image2');
+    const tile_01 = imageLoader.getImage('tile_01');
 
     gameLoop();
 });
