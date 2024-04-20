@@ -130,9 +130,9 @@ function drawUI() {
         offscreenCtx.fillText("Fail!", 10, 30);
     } else {
         // 绘制敌人数量
-        offscreenCtx.fillStyle = "#000000"; // 将文字颜色改为黑色
+        offscreenCtx.fillStyle = "#ffffff"; // 将文字颜色改为黑色
         offscreenCtx.font = "20px Arial";
-        offscreenCtx.fillText("Enemies: " + enemies.length, 10, 30);
+        offscreenCtx.fillText("敌人数量: " + enemies.length, 10, 30);
     }
 }
 
