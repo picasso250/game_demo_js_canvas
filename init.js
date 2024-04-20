@@ -1,11 +1,11 @@
 
-var character;
+let character;
 
 // 敌人数组
-var enemies = [];
+let enemies = [];
 
 // 子弹数组
-var bullets = [];
+let bullets = [];
 
 // 生成敌人函数
 function generateEnemies(numEnemies) {
@@ -48,12 +48,12 @@ function init(canvas) {
     // 更改点击事件处理方式
     canvas.addEventListener("contextmenu", function (event) {
         event.preventDefault(); // 阻止默认右键菜单行为
-
+    
         // 将点击事件位置转换为双缓冲画布坐标系中的位置
         const rect = canvas.getBoundingClientRect();
         const clickX = (event.clientX - rect.left) + camera.x;
         const clickY = (event.clientY - rect.top) + camera.y;
-
+    
         // 更新方块的目标点位置为点击位置
         character.setTargetPoint(clickX, clickY);
     });

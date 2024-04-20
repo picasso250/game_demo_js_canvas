@@ -29,24 +29,13 @@ if (typeof init === 'function') {
     console.log("init函数不存在。");
 }
 
-// 游戏循环
-function gameLoop() {
-    // 获取当前时间
-    const currentTime = performance.now();
-    const deltaTime = (currentTime - previousTime) / 1000; // 将时间差转换为秒
-
-    // 清除双缓冲画布
-    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+function update(deltaTime) {
 
     // 更新游戏角色位置，并传递时间差
     character.update(deltaTime);
 
     // 跟随相机移动
     camera.follow(character.x, character.y);
-
-    // 设置全局的转换
-    offscreenCtx.save();
-    offscreenCtx.translate(-camera.x, -camera.y);
 
     // 绘制游戏角色到双缓冲画布，并传递时间差
     character.draw(offscreenCtx, deltaTime);
@@ -72,6 +61,23 @@ function gameLoop() {
 
     // 过滤出仍存活的敌人
     enemies = enemies.filter(enemy => enemy.health > 0);
+
+}
+
+// 游戏循环
+function gameLoop() {
+    // 获取当前时间
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - previousTime) / 1000; // 将时间差转换为秒
+
+    // 清除双缓冲画布
+    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+    // 设置全局的转换
+    offscreenCtx.save();
+    offscreenCtx.translate(-camera.x, -camera.y);
+
+    update(deltaTime);
 
     // 还原全局转换
     offscreenCtx.restore();
