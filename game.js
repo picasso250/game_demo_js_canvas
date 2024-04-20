@@ -61,7 +61,6 @@ function update(deltaTime) {
 
     // 过滤出仍存活的敌人
     enemies = enemies.filter(enemy => enemy.health > 0);
-
 }
 
 // 游戏循环
